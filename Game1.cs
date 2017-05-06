@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using Microsoft.Xna.Framework.Input.Touch;
 namespace com.dragon_boat
 {
 	/// <summary>
@@ -13,7 +13,7 @@ namespace com.dragon_boat
 	{
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
-		BoatEntity boatF;
+		Bounce boatF;
 
 		public Game1()
 		{
@@ -21,41 +21,21 @@ namespace com.dragon_boat
 			Content.RootDirectory = "Content";
 		}
 
-		/// <summary>
-		/// Allows the game to perform any initialization it needs to before starting to run.
-		/// This is where it can query for any required services and load any non-graphic
-		/// related content.  Calling base.Initialize will enumerate through any components
-		/// and initialize them as well.
-		/// </summary>
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
-			boatF = new BoatEntity(this.GraphicsDevice);
-			boatF.X = 100;
-			boatF.Y = 100;
+			boatF = new Bounce(this.GraphicsDevice);
+
+
 			base.Initialize();
 		}
-
-		/// <summary>
-		/// LoadContent will be called once per game and is the place to load
-		/// all of your content.
-		/// </summary>
 		protected override void LoadContent()
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-			//using (var stream = TitleContainer.OpenStream("Content/boatForward.png"))
-			//{
-			//	boatForward = Texture2D.FromStream(this.GraphicsDevice, stream);
-			//}
-			//TODO: use this.Content to load your game content here 
 		}
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+
 		protected override void Update(GameTime gameTime)
 		{
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
@@ -66,14 +46,11 @@ namespace com.dragon_boat
 #endif
 
 			// TODO: Add your update logic here
-		//	boatF.X = boatF.X + 1;
+			//	boatF.X = boatF.X + 1;
+			boatF.CheckCollision(this.GraphicsDevice);
+			boatF.updateButton(this.GraphicsDevice);  
 			base.Update(gameTime);
 		}
-
-		/// <summary>
-		/// This is called when the game should draw itself.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -83,13 +60,14 @@ namespace com.dragon_boat
 			//Vector2 topLeftOfSprite = new Vector2(50, 50);
 			//Color tintColor = Color.White;
 			//spriteBatch.Draw(boatForward, topLeftOfSprite, tintColor);
-			boatF.Draw(spriteBatch);
-
+			boatF.Draw(spriteBatch); 
 			spriteBatch.End();
 			base.Draw(gameTime);
 		}
 
-		                    
+
+
+
 
 	}
 }
