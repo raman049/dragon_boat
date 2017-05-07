@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -79,9 +79,18 @@ namespace com.dragon_boat
 		public void unloadAll()
 		{
 			t2d_button_play.Dispose();
-			 t2d_button_instruction.Dispose();
-			 t2d_dragon.Dispose();
+			t2d_button_instruction.Dispose();
+			t2d_dragon.Dispose();
+
 
 		}
+		public void UnloadContent(ContentManager content)
+
+		{
+
+			content.Unload();
+
+		}
+
 	}
 }
