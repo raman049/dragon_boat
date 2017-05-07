@@ -28,7 +28,11 @@ namespace com.dragon_boat
 				{
 					output = true;
 				}
-				else if (tl.State == TouchLocationState.Released)
+				//else if (tl.State == TouchLocationState.Released)
+				//{
+				//	output = false;
+				//}
+				else
 				{
 					output = false;
 				}
