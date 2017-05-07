@@ -30,14 +30,14 @@ SpriteFont font;
 			ballVelocity = new Vector2(4, 10);
 			if (ballTexture == null)
 			{
-				using (var stream = TitleContainer.OpenStream("Content/boatForward.png"))
+				using (var stream = TitleContainer.OpenStream("Content/boat_forward.png"))
 				{
 					ballTexture = Texture2D.FromStream(graphicsDevice, stream);
 				}
 			}
 			if (blockTexture == null)
 			{
-				using (var stream = TitleContainer.OpenStream("Content/boatForward.png"))
+				using (var stream = TitleContainer.OpenStream("Content/boat_forward.png"))
 				{
 					blockTexture = Texture2D.FromStream(graphicsDevice, stream);
 
