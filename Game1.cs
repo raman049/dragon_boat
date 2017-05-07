@@ -62,8 +62,9 @@ namespace com.dragon_boat
 			}
 			if (Page2boolen == true)
 			{
-				boatF.CheckCollision(this.GraphicsDevice);
-				boatF.updateButton(this.GraphicsDevice); 
+				//boatF.CheckCollision(this.GraphicsDevice);
+				boatF.updateButton(gameTime);
+				//boatF.Update(gameTime);
 			}
 			base.Update(gameTime);
 		}
