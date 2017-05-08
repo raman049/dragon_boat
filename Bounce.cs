@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,13 +10,15 @@ namespace com.dragon_boat
 {
 	public class Bounce
 	{
-		Texture2D t2dBoat, whiteRectangle, t2dFinishLine;
-		Rectangle bllBounds, boatRect, finishLineRect;
-		Vector2 ballPosition, boatPostion;
+		Texture2D t2dBoat, whiteRectangle, t2dFinishLine, t2dFloat;
+		Rectangle boatRect, finishLineRect, floatRect;
+		Vector2 boatPostion;
 		Button button1, button2;
 		Animation animationRight, animationLeft, animationForward, currentAnimation, animationSteady;
 		int width, height;
 		SpriteFont font;
+		Stopwatch stopWatch;
+		string elapsedTime;
 
 		public float X { get; set; }
 		public float Y { get; set; }
@@ -26,7 +30,6 @@ namespace com.dragon_boat
 			width = graphicsDevice.Viewport.Width;
 			boatPostion = new Vector2(graphicsDevice.Viewport.Width / 2,
 									   graphicsDevice.Viewport.Height * 0.85f);
-			//ballVelocity = new Vector2(4, 10);
 			if (t2dBoat == null)
 			{
 				using (var stream = TitleContainer.OpenStream("Content/boat.png"))
@@ -55,17 +58,25 @@ namespace com.dragon_boat
 					t2dFinishLine = Texture2D.FromStream(graphicsDevice, stream);
 				}
 			}
-					boatRect = new Rectangle((int)(boatPostion.X - t2dBoat.Width / 2),
-				(int)(boatPostion.Y - t2dBoat.Height / 2), graphicsDevice.Viewport.Width / 10, graphicsDevice.Viewport.Height * 3 / 10);
-				finishLineRect = new Rectangle(0,20, graphicsDevice.Viewport.Width, (int)(graphicsDevice.Viewport.Height*0.02));
-		
-				whiteRectangle = new Texture2D(graphicsDevice, 1, 1);
-				whiteRectangle.SetData(new[] { Color.White });
-
-				button1 = new Button(graphicsDevice, new Rectangle(0, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
-				button2 = new Button(graphicsDevice, new Rectangle(graphicsDevice.Viewport.Width / 2, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
-
+			if (t2dFloat == null)
+			{
+				using (var stream = TitleContainer.OpenStream("Content/float2.png"))
+				{
+					t2dFloat = Texture2D.FromStream(graphicsDevice, stream);
+				}
 			}
+			boatRect = new Rectangle((int)(boatPostion.X - t2dBoat.Width / 2),
+		(int)(boatPostion.Y - t2dBoat.Height / 2), graphicsDevice.Viewport.Width / 10, graphicsDevice.Viewport.Height * 3 / 10);
+			finishLineRect = new Rectangle(0, 20, graphicsDevice.Viewport.Width, (int)(graphicsDevice.Viewport.Height * 0.02));
+			floatRect = new Rectangle(200, 200, 100, 100);
+			whiteRectangle = new Texture2D(graphicsDevice, 1, 1);
+			whiteRectangle.SetData(new[] { Color.White });
+
+			button1 = new Button(graphicsDevice, new Rectangle(0, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
+			button2 = new Button(graphicsDevice, new Rectangle(graphicsDevice.Viewport.Width / 2, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
+			stopWatch = new Stopwatch();
+			getTime();
+		}
 		public void LoadContent(ContentManager content)
 		{
 			font = content.Load<SpriteFont>("AlphaWoodFont");
@@ -79,6 +90,7 @@ namespace com.dragon_boat
 				boatPostion.Y = graphicsDevice.Viewport.Height * 0.7f;
 				//ballVelocity = -ballVelocity;
 				//ballPosition += ballVelocity;
+				stopWatch.Stop();
 			}
 
 			else
@@ -104,6 +116,8 @@ namespace com.dragon_boat
 			//button1.Draw(spriteBatch);
 			//button2.Draw(spriteBatch);
 			spriteBatch.DrawString(font, "text to 23423423423423423 print", new Vector2(40, 40), Color.Red);
+
+			spriteBatch.DrawString(font, elapsedTime, new Vector2(100, 100), Color.LightSalmon);
 			var sourceRectangle = currentAnimation.CurrentRectangle;
 			spriteBatch.Draw(t2dBoat, boatRect, sourceRectangle, Color.White);
 			//spriteBatch.Draw(whiteRectangle, finishLineRect, Color.White);
@@ -112,16 +126,19 @@ namespace com.dragon_boat
 		}
 
 		public void drawFinishLine(SpriteBatch spriteBatch)
-		{ for (int i = 0; i < width/2; i++)
+		{
+			for (int i = 0; i < width / 2; i++)
 			{
 				int size = (int)(height * 0.02);
-				spriteBatch.Draw(t2dFinishLine, new Rectangle(size*i,finishLineRect.Y,size,size),new Rectangle(0,0,100,100) , Color.White);
+				spriteBatch.Draw(t2dFinishLine, new Rectangle(size * i, finishLineRect.Y, size, size), new Rectangle(0, 0, 100, 100), Color.White);
 			}
-		
+
 		}
+
 
 		public void moveRight()
 		{
+			//j = 20;
 			boatPostion.X += 10;
 			boatPostion.Y -= 20;
 		}
@@ -142,17 +159,11 @@ namespace com.dragon_boat
 
 		TouchCollection touchCollection;
 		Boolean boolean_br, boolean_bl;
+
 		public void updateButton(GameTime gameTime)
 		{
 			touchCollection = TouchPanel.GetState();
-			//currentAnimation = animationSteady;
-			//if ((button1.touchSelect(touchCollection)) && (button2.touchSelect(touchCollection)))
-			//{
-			//	moveForward();
-			//	currentAnimation = animationForward;
-			//	Console.WriteLine("button 1 && button 2");
-			//}
-			//else 
+			//GIVE DIRECTION TO BOAT
 			if (button1.touchSelect(touchCollection))
 			{
 				boolean_bl = true;
@@ -175,35 +186,61 @@ namespace com.dragon_boat
 				moveForward();
 				currentAnimation = animationForward;
 				Console.WriteLine("button 1 && button 2");
-				boolean_br = false;
-				boolean_bl = false;
+				runTimer();
+
+			}
+			else if (boolean_bl == true && boolean_br == false)
+			{
+				stopWatch.Start();
+				moveLeft();
+				currentAnimation = animationLeft;
+				runTimer();
+			}
+			else if (boolean_bl == false && boolean_br == true)
+			{
+				moveRight();
+				currentAnimation = animationRight;
+				Console.WriteLine("button 2");
+				//boolean_br = false;
+				runTimer();
 			}
 			else
 			{
-				if (boolean_bl == true)
-				{
-					moveLeft();
-					currentAnimation = animationLeft;
-					Console.WriteLine("button 1");
-					boolean_bl = false;
-				}
-				if (boolean_br == true)
-				{
-					moveRight();
-					currentAnimation = animationRight;
-					Console.WriteLine("button 2");
-					boolean_br = false;
-				}
-				else
-				{
-					currentAnimation = animationSteady;
-				}
+				currentAnimation = animationSteady;
+				//Console.WriteLine("else 1");
 			}
+
 
 			boatRect.X = (int)boatPostion.X;
 			boatRect.Y = (int)boatPostion.Y;
 			currentAnimation.Update(gameTime);
+			getTime();
 		}
+
+
+		public void getTime()
+		{
+			TimeSpan ts = stopWatch.Elapsed;
+			elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+		   ts.Hours, ts.Minutes, ts.Seconds,
+		   ts.Milliseconds / 10);
+			//Console.WriteLine("RunTime " + elapsedTime);
+		}
+
+		public void runTimer()
+		{
+			int timeout = 1000;
+			int interval = Timeout.Infinite;
+			TimerCallback callback = new TimerCallback(RunEvent);
+			Timer timer = new Timer(callback, null,timeout, interval);
+			timer.Change(0, 1000);
+		}
+		public void RunEvent(object state)
+		{
+			boolean_br = false;
+			boolean_bl = false;
+		}
+
 
 	}
 
