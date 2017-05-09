@@ -14,7 +14,7 @@ namespace com.dragon_boat
 		Rectangle boatRect, finishLineRect, floatRect;
 		Vector2 boatPostion;
 		Button button1, button2;
-		Animation animationRight, animationLeft, animationForward, currentAnimation, animationSteady;
+		Animation animationRight, animationLeft, animationForward, currentAnimation, animationSteady, animationFloat;
 		int width, height;
 		SpriteFont font;
 		Stopwatch stopWatch;
@@ -60,15 +60,20 @@ namespace com.dragon_boat
 			}
 			if (t2dFloat == null)
 			{
-				using (var stream = TitleContainer.OpenStream("Content/float2.png"))
+				using (var stream = TitleContainer.OpenStream("Content/floats.png"))
 				{
 					t2dFloat = Texture2D.FromStream(graphicsDevice, stream);
 				}
 			}
+			animationFloat = new Animation();
+			animationFloat.AddFrame(new Rectangle(0, 0, 100, 100), TimeSpan.FromSeconds(.25));
+			animationFloat.AddFrame(new Rectangle(100, 0, 100, 100), TimeSpan.FromSeconds(.250));
+			animationFloat.AddFrame(new Rectangle(200, 0, 100, 100), TimeSpan.FromSeconds(.250));
+			animationFloat.AddFrame(new Rectangle(300, 0, 100, 100), TimeSpan.FromSeconds(.250));
+
 			boatRect = new Rectangle((int)(boatPostion.X - t2dBoat.Width / 2),
 		(int)(boatPostion.Y - t2dBoat.Height / 2), graphicsDevice.Viewport.Width / 10, graphicsDevice.Viewport.Height * 3 / 10);
 			finishLineRect = new Rectangle(0, 20, graphicsDevice.Viewport.Width, (int)(graphicsDevice.Viewport.Height * 0.02));
-			floatRect = new Rectangle(200, 200, 100, 100);
 			whiteRectangle = new Texture2D(graphicsDevice, 1, 1);
 			whiteRectangle.SetData(new[] { Color.White });
 
@@ -123,6 +128,7 @@ namespace com.dragon_boat
 			//spriteBatch.Draw(whiteRectangle, finishLineRect, Color.White);
 			//spriteBatch.Draw(t2dFinishLine, new Rectangle(0,0,10,10),new Rectangle(0,0,100,100) , Color.White);
 			drawFinishLine(spriteBatch);
+			drawFloat(spriteBatch);
 		}
 
 		public void drawFinishLine(SpriteBatch spriteBatch)
@@ -134,7 +140,19 @@ namespace com.dragon_boat
 			}
 
 		}
-
+		public void drawFloat(SpriteBatch spriteBatch)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					var sourceRectangle = animationFloat.CurrentRectangle;
+					int size = (int)(width * 0.02);
+					floatRect = new Rectangle((int)(width * 0.35f + i * (width * 0.35f)), (int)(width * 0.3f + j * (width * 0.3f)), size, size);
+					spriteBatch.Draw(t2dFloat, floatRect, sourceRectangle, Color.White);
+				}
+			}
+		}
 
 		public void moveRight()
 		{
@@ -214,6 +232,7 @@ namespace com.dragon_boat
 			boatRect.X = (int)boatPostion.X;
 			boatRect.Y = (int)boatPostion.Y;
 			currentAnimation.Update(gameTime);
+			animationFloat.Update(gameTime);
 			getTime();
 		}
 
@@ -232,7 +251,7 @@ namespace com.dragon_boat
 			int timeout = 1000;
 			int interval = Timeout.Infinite;
 			TimerCallback callback = new TimerCallback(RunEvent);
-			Timer timer = new Timer(callback, null,timeout, interval);
+			Timer timer = new Timer(callback, null, timeout, interval);
 			timer.Change(0, 1000);
 		}
 		public void RunEvent(object state)
