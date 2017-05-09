@@ -91,21 +91,20 @@ namespace com.dragon_boat
 		{
 			if (!graphicsDevice.Viewport.Bounds.Contains(boatRect))
 			{
-				boatPostion.X = graphicsDevice.Viewport.Width / 2;
-				boatPostion.Y = graphicsDevice.Viewport.Height * 0.7f;
-				//ballVelocity = -ballVelocity;
-				//ballPosition += ballVelocity;
+					boatPostion.X = graphicsDevice.Viewport.Width / 2;
+					boatPostion.Y = graphicsDevice.Viewport.Height * 0.7f;
 				stopWatch.Stop();
 			}
-
-			else
+			if (boatRect.X < 0)
 			{
-				//move the ball a bit
-				//ballPosition += ballVelocity;
-
+				boatPostion.X += 20;
+				boatPostion.Y -= 5;
 			}
-
-
+			if (boatRect.X + boatRect.Width > width)
+			{
+				boatPostion.X -= 20;
+				boatPostion.Y -= 5;
+			}
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
@@ -224,7 +223,7 @@ namespace com.dragon_boat
 			}
 			else if (boolean_bl == true && boolean_br == false)
 			{
-				
+
 				moveLeft();
 				currentAnimation = animationLeft;
 				runTimer();
