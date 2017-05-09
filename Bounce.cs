@@ -80,7 +80,7 @@ namespace com.dragon_boat
 			button1 = new Button(graphicsDevice, new Rectangle(0, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
 			button2 = new Button(graphicsDevice, new Rectangle(graphicsDevice.Viewport.Width / 2, 0, graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height));
 			stopWatch = new Stopwatch();
-			getTime();
+			//getTime();
 		}
 		public void LoadContent(ContentManager content)
 		{
@@ -129,6 +129,10 @@ namespace com.dragon_boat
 			//spriteBatch.Draw(t2dFinishLine, new Rectangle(0,0,10,10),new Rectangle(0,0,100,100) , Color.White);
 			drawFinishLine(spriteBatch);
 			drawFloat(spriteBatch);
+			if (drawCount == true)
+			{
+				spriteBatch.DrawString(font, count_stirng, new Vector2(width / 2, height / 2), Color.Red);
+			}
 		}
 
 		public void drawFinishLine(SpriteBatch spriteBatch)
@@ -152,6 +156,16 @@ namespace com.dragon_boat
 					spriteBatch.Draw(t2dFloat, floatRect, sourceRectangle, Color.White);
 				}
 			}
+		}
+		Boolean startR = false;
+		public void startRace()
+		{
+			if (startR == false)
+			{
+				startR = true;
+				runCount123();
+			}
+
 		}
 
 		public void moveRight()
@@ -180,6 +194,7 @@ namespace com.dragon_boat
 
 		public void updateButton(GameTime gameTime)
 		{
+			startRace();
 			touchCollection = TouchPanel.GetState();
 			//GIVE DIRECTION TO BOAT
 			if (button1.touchSelect(touchCollection))
@@ -209,7 +224,7 @@ namespace com.dragon_boat
 			}
 			else if (boolean_bl == true && boolean_br == false)
 			{
-				stopWatch.Start();
+				
 				moveLeft();
 				currentAnimation = animationLeft;
 				runTimer();
@@ -252,7 +267,7 @@ namespace com.dragon_boat
 			int interval = Timeout.Infinite;
 			TimerCallback callback = new TimerCallback(RunEvent);
 			Timer timer = new Timer(callback, null, timeout, interval);
-			timer.Change(0, 1000);
+			timer.Change(25, 1000);
 		}
 		public void RunEvent(object state)
 		{
@@ -260,6 +275,38 @@ namespace com.dragon_boat
 			boolean_bl = false;
 		}
 
+		int count = 0;
+		string count_stirng = "0";
+		Boolean drawCount = true;
+		public void runCount123()
+		{
+			int timeout = 0;
+			int interval = 1000;
+			TimerCallback callback = new TimerCallback(count123);
+			Timer timer = new Timer(callback, null, timeout, interval);
+			timer.Change(1000, 1000);
+		}
+		public void count123(object state)
+		{
+			if (count < 4)
+			{
+				count += 1;
+				count_stirng = count.ToString();
+
+			}
+			if (count == 4)
+			{
+				count_stirng = "START";
+				stopWatch.Start();
+				count += 1;
+			}
+			if (count > 4)
+			{
+				drawCount = false;
+				count += 1;
+			}
+
+		}
 
 	}
 
