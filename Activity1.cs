@@ -17,6 +17,7 @@ namespace com.dragon_boat.Droid
 			   Icon = "@drawable/icon",
 			   Theme = "@style/Theme.Splash",
 				AlwaysRetainTaskState = true,
+		   ScreenOrientation = ScreenOrientation.Portrait,
 			   LaunchMode = LaunchMode.SingleInstance,
 			   ConfigurationChanges = ConfigChanges.Orientation |
 									  ConfigChanges.KeyboardHidden |
